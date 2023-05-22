@@ -10,6 +10,8 @@ import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.sevyh.sevyhuserservice.userservice.api.models.User;
+
 import org.keycloak.OAuth2Constants;
 
 
@@ -50,12 +52,16 @@ public class KeycloakService {
                 .build();
     }
 
-    public List<String> getUserUuids() {
+    public List<User> getUserUuids() {
         return this.keycloakInstance.realm(realm)
                 .users()
                 .list()
                 .stream()
-                .map(UserRepresentation::getId)
+                .map(userRepresentation -> {
+                    User user = new User();
+                    user.setUuid(userRepresentation.getId());
+                    return user;
+                })
                 .collect(Collectors.toList());
     }
 }
